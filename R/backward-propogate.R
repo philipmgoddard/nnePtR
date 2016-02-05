@@ -22,7 +22,7 @@ backProp <- function(unrollThetas,
   a[[nLayers + 2]] <- sigmoid(z[[nLayers + 1]])
 
   # back propogation to determine errors
-  delta[[nLayers + 1]] <- a[[nLayers + 2]] - outcomeMat
+  delta[[nLayers + 1]] <- a[[nLayers + 2]] - outcome
   for (i in nLayers:1) {
     delta[[i]] <- (delta[[i + 1]] %*% Thetas[[i + 1]])[, 2:ncol(Thetas[[i + 1]]), drop = FALSE] *
       sigmoidGradient(z[[i]])

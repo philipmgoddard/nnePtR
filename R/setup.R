@@ -11,7 +11,7 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
   if(nOutcome == 2) nOutcome = 1
   nSample <- nrow(input)
 
-  a_size <<- lapply(1:(nLayers + 2), function(x) {
+  a_size <- lapply(1:(nLayers + 2), function(x) {
     if(x == 1) {
       tmp <- matrix(NA, nrow = nSample, ncol = nFeature + 1)
       tmp[, 1] <- 1
@@ -28,7 +28,7 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
     }
   })
 
-  z_size <<- lapply(1:(nLayers + 1), function(x) {
+  z_size <- lapply(1:(nLayers + 1), function(x) {
     if(x == nLayers + 1) {
       matrix(NA, nrow = nSample, ncol = nOutcome)
     }
@@ -37,11 +37,11 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
     }
   })
 
-  delta_size <<- z_size
+  delta_size <- z_size
 
   set.seed(seed)
   epsilon_init <- 0.12
-  Thetas_size <<- lapply(1:(nLayers + 1), function(x) {
+  Thetas_size <- lapply(1:(nLayers + 1), function(x) {
     nC <- dim(a_size[[x]])[2]
     # remember bias already included
     # but no bias for output layer (ie s_{j + 1} for last Theta)
@@ -55,7 +55,7 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
            ncol = nC)
   })
 
-  Deltas_size <<- lapply(1:(nLayers + 1), function(x) {
+  Deltas_size <- lapply(1:(nLayers + 1), function(x) {
     nC <- dim(a_size[[x]])[2]
     if(x != (nLayers + 1)) {
       nR <- dim(a_size[[x + 1]])[2] - 1
@@ -67,15 +67,22 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
            ncol = nC)
   })
 
-  grad_size <<- Deltas_size
+  grad_size <- Deltas_size
 
   # dummy up training outcomes
-  outcomeMat <<- matrix(data = 0,
+  outcomeMat <- matrix(data = 0,
                         nrow = length(outcome),
                         ncol = nOutcome)
   for (i in 1:nOutcome) {
-    outcomeMat[, i] <<- (outcome == i);
+    outcomeMat[, i] <- (outcome == i);
   }
-  return(0)
+
+  return(list (a_temp = a_size,
+               z_temp = z_size,
+               delta_temp = delta_size,
+               thetas_temp = Thetas_size,
+               Deltas_temp = Deltas_size,
+               grad_temp = grad_size,
+               outcome_temp = outcomeMat))
 }
 
