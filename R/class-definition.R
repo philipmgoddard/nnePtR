@@ -34,7 +34,8 @@ setClass(
 #' Constructor for nnePtR
 #' @import methods
 #' @export
-nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25, lambda = 0.01) {
+nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
+                      lambda = 0.01, seed = 1234, iters = 200) {
 
   # first step - input into a matrix
   train_input <- data.matrix(train_input)
@@ -45,7 +46,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25, lamb
   # call setup - this loads lists of template matrices of correct size into current environment
   # much faster to pass templates to forward and backprop functions than initialising
   # matrices at every call by optim()
-  templates <- nnetTrainSetup(train_input, train_outcome, nLayers, nUnits, seed = 1234)
+  templates <- nnetTrainSetup(train_input, train_outcome, nLayers, nUnits, seed = seed)
   a_size <- templates[[1]]
   z_size <- templates[[2]]
   delta_size <- templates[[3]]
@@ -72,7 +73,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25, lamb
                   delta = delta_size,
                   Deltas = Deltas_size,
                   hessian = FALSE,
-                  control = list(maxit = 500))
+                  control = list(maxit = iters))
 
   # extract final matrices of parameters
   Thetas_final <- rollParams(params$par, nLayers, Thetas_size)

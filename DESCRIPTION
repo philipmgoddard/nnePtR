@@ -1,18 +1,22 @@
 Package: nnePtR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Neural Network Classifier
 Version: 0.1
 Date: 2016-02-05
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Philip Goddard
+Maintainer: Philip Goddard <philip.mgoddard@gmail.com>
+Description: Fit a neural network classifier with user-defined number of hidden
+    layers and weights.
+License: GPL
 LazyData: TRUE
 Imports:
     methods
 Collate:
-    'class-definition.R'
-    'functions.R'
-    'forward-propogate.R'
     'backward-propogate.R'
+    'class-definition.R'
+    'forward-propogate.R'
+    'functions.R'
+    'generics.R'
     'setup.R'
+Suggests:
+    testthat

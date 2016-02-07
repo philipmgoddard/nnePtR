@@ -10,13 +10,9 @@ forwardProp <- function(unrollThetas,
   #roll up thetas back into list of matrices
   Thetas <- rollParams(unrollThetas, nLayers, Thetas)
 
-  # forward propogation to determine cost
-  for(i in 1:nLayers) {
-    z[[i]] <- a[[i]] %*% t(Thetas[[i]])
-    a[[i + 1]][, 2:ncol(a[[i + 1]])] <- sigmoid(z[[i]])
-  }
-  z[[nLayers + 1]] <- a[[nLayers + 1]] %*% t(Thetas[[nLayers + 1]])
-  a[[nLayers + 2]] <- sigmoid(z[[nLayers + 1]])
+  # forward propogation
+  tmp <- propogate(Thetas, a, z, nUnits, nLayers)
+  a <- tmp[[1]]
 
   # cost
   J <- (1.0 / m) *
@@ -34,4 +30,18 @@ forwardProp <- function(unrollThetas,
   # add penalty to cost
   J <- J + penalty
   return(J)
+}
+
+
+
+propogate <- function(Thetas, a, z, nUnits, nLayers) {
+  for(i in 1:nLayers) {
+    z[[i]] <- a[[i]] %*% t(Thetas[[i]])
+    a[[i + 1]][, 2:ncol(a[[i + 1]])] <- sigmoid(z[[i]])
+  }
+  z[[nLayers + 1]] <- a[[nLayers + 1]] %*% t(Thetas[[nLayers + 1]])
+  a[[nLayers + 2]] <- sigmoid(z[[nLayers + 1]])
+
+  return(list(a = a,
+              z = z))
 }

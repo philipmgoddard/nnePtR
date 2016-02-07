@@ -13,13 +13,10 @@ backProp <- function(unrollThetas,
   m <- nrow(outcome)
   Thetas <- rollParams(unrollThetas, nLayers, Thetas)
 
-  # forward prop
-  for(i in 1:nLayers) {
-    z[[i]] <- a[[i]] %*% t(Thetas[[i]])
-    a[[i + 1]][, 2:ncol(a[[i + 1]])] <- sigmoid(z[[i]])
-  }
-  z[[nLayers + 1]] <- a[[nLayers + 1]] %*% t(Thetas[[nLayers + 1]])
-  a[[nLayers + 2]] <- sigmoid(z[[nLayers + 1]])
+  # forward propogation
+  tmp <- propogate(Thetas, a, z, nUnits, nLayers)
+  a <- tmp[[1]]
+  z <- tmp[[2]]
 
   # back propogation to determine errors
   delta[[nLayers + 1]] <- a[[nLayers + 2]] - outcome
