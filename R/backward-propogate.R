@@ -1,10 +1,20 @@
-# backprop performs a forward then backward proogation
-# to calculatethe gradient of Theta (back prop)
-# We want to minimise cost over Thetas eventually
-# Arguments - a vector of 'unrolled' Theta matrices,
-# nUnits, nLayers, lambda, outcome
-# rest are templates of sizes
-#
+#' backProp performs a forward propogation with current values
+#' of Thetas, then performs a backward propogation to calculate
+#' gradient needed for optimisation
+#'
+#' @param unrollThetas vector comprised of unrolled parameter matrix elements
+#' @param Thetas template list of matrices allocated to correct size
+#' @param nUnits number of units in each hidden layer of network
+#' @param nLayers number of hidden layers in the network
+#' @param lambda penalty term
+#' @param outcome matrix of 'dummied' outcomes
+#' @param a template list of activation matrices (with "zeroth" layer filled in with inputs)
+#' @param z template list of transformed activation matrices
+#' @param gradient template list of matrices of gradients
+#' @param delta template list of matrices of errors
+#' @param Deltas template list of matrices of product of activations and errors
+#' @export
+#'
 backProp <- function(unrollThetas,
                      Thetas, nUnits, nLayers, lambda, outcome,
                      a, z, gradient,

@@ -2,31 +2,80 @@
 NULL
 
 #' Show generic
+#'
 #' @param object object of class nnePtR
 #' @export
+#'
 setMethod(
   f = "show",
   signature = "nnePtR",
   function(object) {
-    cat("This neural net has units: ")
-    cat(object@n_units)
-    cat("\n\nThis neural net has hidden layers: ")
+    cat("\nObject of class nnePtR")
+    cat("\n\nNumber of hidden layers: ")
     cat(object@n_layers)
+    cat("\nNumber of units per hidden layer: ")
+    cat(object@n_units)
+    cat("\nPenalty term: ")
+    cat(object@penalty)
+    cat("\nNumber of training instances: ")
+    cat(nrow(object@input))
+    cat("\nNumber of input features: ")
+    cat(ncol(object@input))
+    cat("\nNumber of output classes: ")
+    cat(length(levels(object@outcome)))
   }
 )
 
-#' Predict generic
+#' Show generic
+#'
 #' @param object object of class nnePtR
 #' @export
+#'
+setMethod(
+  f = "summary",
+  signature = "nnePtR",
+  function(object) {
+    cat("\nObject of class nnePtR")
+    cat("\n\nNumber of hidden layers: ")
+    cat(object@n_layers)
+    cat("\nNumber of units per hidden layer: ")
+    cat(object@n_units)
+    cat("\nPenalty term: ")
+    cat(object@penalty)
+    cat("\nNumber of training instances: ")
+    cat(nrow(object@input))
+    cat("\nNumber of input features: ")
+    cat(ncol(object@input))
+    cat("\nNumber of output classes: ")
+    cat(length(levels(object@outcome)))
+    cat("\n\nFinal cost: ")
+    cat(object@cost)
+    cat("\nOptimisation method: ")
+    cat(object@info[[1]])
+    cat("\nMax iterations: ")
+    cat(object@info[[2]])
+    cat("\nConvergence code: ")
+    cat(object@info[[3]])
+  }
+)
+
+
+#' Predict generic
+#'
+#' @param object object of class nnePtR
+#' @param newdata data to generate predictions for
+#' @param type select type = "response" for predicted class, or "prob" for probabilities
+#' @export
+#'
 setMethod(
   f = "predict",
   signature = "nnePtR",
-  function(object, newdata, ...) {
+  function(object, newdata, type = "response") {
 
     # step 1: load params
-    newdata <- data.matrix(new_data)
+    newdata <- data.matrix(newdata)
     Thetas <- object@fitted_params
-    nSample <- nrow(new_data)
+    nSample <- nrow(newdata)
     nUnits <- object@n_units
     nLayers <- object@n_layers
     nOutcome <- length(unique(object@outcome))
@@ -64,16 +113,28 @@ setMethod(
     tmp <- propogate(Thetas, a, z, nUnits, nLayers)
     a <- tmp[[1]]
 
-    # return classes or probabilities. if 1 class problem, return
+    # step 3: return classes or probabilities. if 1 class problem, return
     # probability of positive class, if more that 1 class return p of all classes
-    # use 'type' argument?
     if(dim(a[[length(a)]])[2] == 1) {
-      return(list(prob = a[[length(a)]],
-                  class = ifelse(a[[length(a)]] >= 0.5, 1, 0)))
+      if(type == "response") {
+        return(levels(object@outcome)[ifelse(a[[length(a)]] >= 0.5, 1, 0) + 1])
+      } else if(type == "prob") {
+        tmp <- a[[length(a)]]
+        colnames(tmp) <- levels(object@outcome)[1]
+        return(a[[length(a)]])
+      } else {
+        "Please specify type to equal \"response\" or \"prob\""
+      }
     } else {
-      return(list(prob = a[[length(a)]],
-                  class = max.col(a[[length(a)]])))
+      if(type == "response") {
+        return(levels(object@outcome)[max.col(a[[length(a)]])])
+      } else if(type == "prob") {
+        tmp <- a[[length(a)]]
+        colnames(tmp) <- levels(object@outcome)
+        return(tmp)
+      } else {
+        "Please specify type to equal \"response\" or \"prob\""
+      }
     }
-
   }
 )

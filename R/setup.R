@@ -1,14 +1,20 @@
-#################################################
-# setup: return lists of matrices of correct dimensions
-# into the calling environment. The aim is to have
-# dimensions defined, so will not have to reallocate every time
-# we use these objects.
-
+#' nnetTrainSetup returns a list of templates for use
+#' by forward and back propogation functions.
+#' Far more efficient to pass templates (defined once) than
+#' redefining matrices of correct size at each iteration when optimising
+#'
+#' @param input matrix of inputs (nSamples x nFeatures)
+#' @param outcome vector of outcomes (factor)
+#' @param nLayers number of hidden layers in network
+#' @param nUnits number of units in each hidden layer
+#' @param seed seed for intilialisng parameters
+#'
 nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234) {
   nFeature <- ncol(input)
   nOutcome <- length(unique(outcome))
   # binary case
   if(nOutcome == 2) nOutcome = 1
+  #
   nSample <- nrow(input)
 
   a_size <- lapply(1:(nLayers + 2), function(x) {
@@ -40,8 +46,10 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
   delta_size <- z_size
 
   set.seed(seed)
-  epsilon_init <- 0.12
+  #epsilon_init <- 0.12
   Thetas_size <- lapply(1:(nLayers + 1), function(x) {
+    # find more formal way to decide on initial weights
+    epsilon_init <- sqrt(6 / dim(a_size[[x]])[1])
     nC <- dim(a_size[[x]])[2]
     # remember bias already included
     # but no bias for output layer (ie s_{j + 1} for last Theta)
@@ -85,4 +93,3 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
                grad_temp = grad_size,
                outcome_temp = outcomeMat))
 }
-

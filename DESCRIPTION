@@ -12,8 +12,9 @@ LazyData: TRUE
 Imports:
     methods
 Collate:
-    'backward-propogate.R'
     'class-definition.R'
+    'accessors.R'
+    'backward-propogate.R'
     'forward-propogate.R'
     'functions.R'
     'generics.R'

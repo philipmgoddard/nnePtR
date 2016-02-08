@@ -1,31 +1,34 @@
-#################################################
-# sigmoid function
-
+#' Sigmoid function
+#'
+#' @param x input
+#'
 sigmoid <- function(x) {
   return(1.0 / (1.0 + exp(-x)))
 }
-#################################################
 
-
-#################################################
-# sigmoid gradient function
-
+#' Sigmoid gradient function
+#'
+#' @param x input
+#'
 sigmoidGradient <- function(x) {
   return(sigmoid(x) * (1.0 - sigmoid(x)))
 }
-#################################################
 
-
-#################################################
-# unroll list of matrices into a vector
-
+#' Unroll a list of matrices into a single vector
+#'
+#' @param x input list of matrices
+#'
 unrollParams <- function(x) {
   return(unlist(lapply(x, c)))
 }
 
-#################################################
-# roll a vector into a list of matrices
-
+#' Roll a vector of parameters into a list of matrices
+#' defined by a template
+#'
+#' @param x input vector to be rolled into list of matrices
+#' @param nLayers number of hidden layers in neural network
+#' @param Thetas_size template list of matrices for x to be rolled into
+#'
 rollParams <- function(x, nLayers, Thetas_size) {
   pos <- 1
   for(i in 1:(nLayers + 1)) {
@@ -35,5 +38,3 @@ rollParams <- function(x, nLayers, Thetas_size) {
   }
   return(Thetas_size)
 }
-
-#################################################

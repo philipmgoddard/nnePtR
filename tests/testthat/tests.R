@@ -6,6 +6,6 @@ context("Simple tests")
 test_that("calculated cost from test on iris", {
   expect_equal(nnePtR::nnetBuild(iris[, 1:4], iris[, 5], nLayers = 2, nUnits = 20,
                                  lambda = 0.1, seed = 1234, iters = 200)@cost,
-               0.1830735,
-               tolerance = 1e-7)
+               0.1839221,
+               tolerance = 1e-6)
 })

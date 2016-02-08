@@ -4,9 +4,12 @@
 #' @slot train_outcome
 #' @slot n_layers
 #' @slot n_units
+#' @slot penalty
+#' @slot cost
 #' @slot lambda
 #' @slot fitted_params
-#' @export
+#' @slot info
+#'
 setClass(
   Class = "nnePtR",
   slots = list(
@@ -16,37 +19,36 @@ setClass(
     n_units = "numeric",
     penalty = "numeric",
     cost = "numeric",
-    fitted_params = "list")
+    fitted_params = "list",
+    info = "list")
 )
 
-# #' Initialiser for nnePtR objects
-# #' @param .Object object of class nnePtR
-# #' @export
-# setMethod(
-#   f = "initialize",
-#   signature = "nnePtR",
-#   definition = function(.Object) {
-#      cat("--- nnePtR: initialiser --- \n")
-#     return(.Object)
-#   }
-# )
-
 #' Constructor for nnePtR
+#'
+#' @param train_input data frame or matrix of input features
+#' @param train_outcome vector of outcome. should be a factor
+#' @param nLayers number of hidden layers
+#' @param nUnits number of units in hidden layers. Constant across each hidden layer.
+#' @param lambda penalty term
+#' @param seed seed for initialising network
+#' @param iters number of iterations (passed to optim)
+#' @param optim_method opitimisation method (passed to optim)
 #' @import methods
 #' @export
+#'
 nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
-                      lambda = 0.01, seed = 1234, iters = 200) {
+                      lambda = 0.01, seed = as.numeric(Sys.time()),
+                      iters = 200, optim_method = "L-BFGS-B") {
 
-  # first step - input into a matrix
   train_input <- data.matrix(train_input)
-  # outcome into numbers
   outcome_copy <- train_outcome
   train_outcome <- as.numeric(train_outcome)
 
-  # call setup - this loads lists of template matrices of correct size into current environment
-  # much faster to pass templates to forward and backprop functions than initialising
-  # matrices at every call by optim()
-  templates <- nnetTrainSetup(train_input, train_outcome, nLayers, nUnits, seed = seed)
+  templates <- nnetTrainSetup(train_input,
+                              train_outcome,
+                              nLayers,
+                              nUnits,
+                              seed = seed)
   a_size <- templates[[1]]
   z_size <- templates[[2]]
   delta_size <- templates[[3]]
@@ -56,8 +58,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
   outcomeMat <- templates[[7]]
 
   unrollThetas <- unrollParams(Thetas_size)
-
-  # minimise cost over parameters (Thetas) using optim()
   params <- optim(unrollThetas,
                   fn = nnePtR::forwardProp,
                   gr = nnePtR::backProp,
@@ -75,7 +75,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                   hessian = FALSE,
                   control = list(maxit = iters))
 
-  # extract final matrices of parameters
   Thetas_final <- rollParams(params$par, nLayers, Thetas_size)
 
   return(new(Class = "nnePtR",
@@ -85,6 +84,48 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
              n_units = nUnits,
              penalty = lambda,
              cost = params$value,
-             fitted_params = Thetas_final)
+             fitted_params = Thetas_final,
+             info = list(method = optim_method,
+                         max_iterations = iters,
+                         convergence = params$convergence))
          )
 }
+
+#' Initializor to catch input errors
+#'
+#' @param .Object object of class nnePtR
+#' @param train_input
+#' @param train_outcome
+#' @param n_layers
+#' @param n_units
+#' @param penalty
+#' @param cost
+#' @param lambda
+#' @param fitted_params
+#' @param info
+#'
+setMethod(
+  f="initialize",
+  signature = "nnePtR",
+  definition = function(.Object, input, outcome,
+                        n_layers, n_units, penalty,
+                        cost, fitted_params, info) {
+
+    if(nrow(input) != length(outcome)) stop("input and outcome do not match")
+    if(n_layers < 1) stop("there must be at least 1 hidden layer")
+    if(!class(outcome) == "factor") stop("outcome must be a factor variable")
+    if(!class(input) == "matrix") stop("input must be a matrix variable")
+    if(sum(is.na(input)) >= 1) stop("missing values in input")
+    if(info$convergence > 1) print("it is advised to investigate convergence of optimisation")
+
+    .Object@input <- input
+    .Object@outcome <- outcome
+    .Object@n_layers <- n_layers
+    .Object@n_units <- n_units
+    .Object@penalty <- penalty
+    .Object@cost <- cost
+    .Object@fitted_params <- fitted_params
+    .Object@info <- info
+    return(.Object)
+  }
+)
