@@ -93,3 +93,7 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
                grad_temp = grad_size,
                outcome_temp = outcomeMat))
 }
+
+#' @describeIn nnetTrainSetup
+#'
+nnetTrainSetup_c <- compiler::cmpfun(nnetTrainSetup)

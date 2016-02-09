@@ -11,23 +11,21 @@
 \arguments{
 \item{.Object}{object of class nnePtR}
 
-\item{n_layers}{}
+\item{input}{matrix of inputs. Dimensions are (n training samples x n features)}
 
-\item{n_units}{}
+\item{outcome}{factor variable for outcome}
 
-\item{penalty}{}
+\item{n_layers}{number of hidden layers in the network}
 
-\item{cost}{}
+\item{n_units}{number of units in the hidden layers}
 
-\item{fitted_params}{}
+\item{penalty}{penalty term (weight decay)}
 
-\item{info}{}
+\item{cost}{final cost obtained through optimisation}
 
-\item{train_input}{}
+\item{fitted_params}{list of matrices holding the fitted parameters}
 
-\item{train_outcome}{}
-
-\item{lambda}{}
+\item{info}{list containing infomation from optimisation}
 }
 \description{
 Initializor to catch input errors

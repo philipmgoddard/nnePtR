@@ -44,7 +44,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
   outcome_copy <- train_outcome
   train_outcome <- as.numeric(train_outcome)
 
-  templates <- nnetTrainSetup(train_input,
+  templates <- nnetTrainSetup_c(train_input,
                               train_outcome,
                               nLayers,
                               nUnits,
@@ -57,7 +57,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
   grad_size <- templates[[6]]
   outcomeMat <- templates[[7]]
 
-  unrollThetas <- unrollParams(Thetas_size)
+  unrollThetas <- unrollParams_c(Thetas_size)
   params <- optim(unrollThetas,
                   fn = nnePtR::forwardProp,
                   gr = nnePtR::backProp,
@@ -75,7 +75,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                   hessian = FALSE,
                   control = list(maxit = iters))
 
-  Thetas_final <- rollParams(params$par, nLayers, Thetas_size)
+  Thetas_final <- rollParams_c(params$par, nLayers, Thetas_size)
 
   return(new(Class = "nnePtR",
              input = train_input,
@@ -94,15 +94,14 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
 #' Initializor to catch input errors
 #'
 #' @param .Object object of class nnePtR
-#' @param train_input
-#' @param train_outcome
-#' @param n_layers
-#' @param n_units
-#' @param penalty
-#' @param cost
-#' @param lambda
-#' @param fitted_params
-#' @param info
+#' @param input matrix of inputs. Dimensions are (n training samples x n features)
+#' @param outcome factor variable for outcome
+#' @param n_layers number of hidden layers in the network
+#' @param n_units number of units in the hidden layers
+#' @param penalty penalty term (weight decay)
+#' @param cost final cost obtained through optimisation
+#' @param fitted_params list of matrices holding the fitted parameters
+#' @param info list containing infomation from optimisation
 #'
 setMethod(
   f="initialize",

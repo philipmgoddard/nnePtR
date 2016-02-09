@@ -2,10 +2,13 @@
 % Please edit documentation in R/functions.R
 \name{rollParams}
 \alias{rollParams}
+\alias{rollParams_c}
 \title{Roll a vector of parameters into a list of matrices
 defined by a template}
 \usage{
 rollParams(x, nLayers, Thetas_size)
+
+rollParams_c(x, nLayers, Thetas_size)
 }
 \arguments{
 \item{x}{input vector to be rolled into list of matrices}
@@ -18,4 +21,8 @@ rollParams(x, nLayers, Thetas_size)
 Roll a vector of parameters into a list of matrices
 defined by a template
 }
+\section{Functions}{
+\itemize{
+\item \code{rollParams_c}: 
+}}
 

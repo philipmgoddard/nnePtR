@@ -21,9 +21,9 @@ forwardProp <- function(unrollThetas,
   # note that gr needs same inputs as fn for use in optim, even if not used
   # gradient, delta and Deltas not needed
   m <- nrow(outcome)
-  Thetas <- rollParams(unrollThetas, nLayers, Thetas)
+  Thetas <- rollParams_c(unrollThetas, nLayers, Thetas)
 
-  tmp <- propogate(Thetas, a, z, nUnits, nLayers)
+  tmp <- propogate_c(Thetas, a, z, nUnits, nLayers)
   a <- tmp[[1]]
 
   # cost
@@ -41,7 +41,6 @@ forwardProp <- function(unrollThetas,
   return(J)
 }
 
-
 #' propogate performs the meat of the work for forwardProp
 #'
 #' @param Thetas list of matrices of parameters
@@ -53,12 +52,16 @@ forwardProp <- function(unrollThetas,
 propogate <- function(Thetas, a, z, nUnits, nLayers) {
   for(i in 1:nLayers) {
     z[[i]] <- a[[i]] %*% t(Thetas[[i]])
-    a[[i + 1]][, 2:ncol(a[[i + 1]])] <- sigmoid(z[[i]])
+    a[[i + 1]][, 2:ncol(a[[i + 1]])] <- sigmoid_c(z[[i]])
   }
 
   z[[nLayers + 1]] <- a[[nLayers + 1]] %*% t(Thetas[[nLayers + 1]])
-  a[[nLayers + 2]] <- sigmoid(z[[nLayers + 1]])
+  a[[nLayers + 2]] <- sigmoid_c(z[[nLayers + 1]])
 
   return(list(a = a,
               z = z))
 }
+
+#' @describeIn propogate
+#'
+propogate_c <- compiler::cmpfun(propogate)

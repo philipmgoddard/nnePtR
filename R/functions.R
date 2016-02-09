@@ -6,6 +6,12 @@ sigmoid <- function(x) {
   return(1.0 / (1.0 + exp(-x)))
 }
 
+
+#' @describeIn sigmoid
+#'
+sigmoid_c <- compiler::cmpfun(sigmoid)
+
+
 #' Sigmoid gradient function
 #'
 #' @param x input
@@ -14,6 +20,11 @@ sigmoidGradient <- function(x) {
   return(sigmoid(x) * (1.0 - sigmoid(x)))
 }
 
+
+#' @describeIn sigmoidGradient
+#'
+sigmoidGradient_c <- compiler::cmpfun(sigmoidGradient)
+
 #' Unroll a list of matrices into a single vector
 #'
 #' @param x input list of matrices
@@ -21,6 +32,11 @@ sigmoidGradient <- function(x) {
 unrollParams <- function(x) {
   return(unlist(lapply(x, c)))
 }
+
+
+#' @describeIn unrollParams
+#'
+unrollParams_c <- compiler::cmpfun(unrollParams)
 
 #' Roll a vector of parameters into a list of matrices
 #' defined by a template
@@ -38,3 +54,10 @@ rollParams <- function(x, nLayers, Thetas_size) {
   }
   return(Thetas_size)
 }
+
+
+#' @describeIn rollParams
+#'
+rollParams_c <- compiler::cmpfun(rollParams)
+
+

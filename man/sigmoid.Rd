@@ -2,9 +2,12 @@
 % Please edit documentation in R/functions.R
 \name{sigmoid}
 \alias{sigmoid}
+\alias{sigmoid_c}
 \title{Sigmoid function}
 \usage{
 sigmoid(x)
+
+sigmoid_c(x)
 }
 \arguments{
 \item{x}{input}
@@ -12,4 +15,8 @@ sigmoid(x)
 \description{
 Sigmoid function
 }
+\section{Functions}{
+\itemize{
+\item \code{sigmoid_c}: 
+}}
 

@@ -2,9 +2,12 @@
 % Please edit documentation in R/functions.R
 \name{unrollParams}
 \alias{unrollParams}
+\alias{unrollParams_c}
 \title{Unroll a list of matrices into a single vector}
 \usage{
 unrollParams(x)
+
+unrollParams_c(x)
 }
 \arguments{
 \item{x}{input list of matrices}
@@ -12,4 +15,8 @@ unrollParams(x)
 \description{
 Unroll a list of matrices into a single vector
 }
+\section{Functions}{
+\itemize{
+\item \code{unrollParams_c}: 
+}}
 

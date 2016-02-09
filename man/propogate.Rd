@@ -2,9 +2,12 @@
 % Please edit documentation in R/forward-propogate.R
 \name{propogate}
 \alias{propogate}
+\alias{propogate_c}
 \title{propogate performs the meat of the work for forwardProp}
 \usage{
 propogate(Thetas, a, z, nUnits, nLayers)
+
+propogate_c(Thetas, a, z, nUnits, nLayers)
 }
 \arguments{
 \item{Thetas}{list of matrices of parameters}
@@ -20,4 +23,8 @@ propogate(Thetas, a, z, nUnits, nLayers)
 \description{
 propogate performs the meat of the work for forwardProp
 }
+\section{Functions}{
+\itemize{
+\item \code{propogate_c}: 
+}}
 
