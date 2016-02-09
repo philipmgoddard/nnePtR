@@ -3,7 +3,7 @@
 \docType{methods}
 \name{summary,nnePtR-method}
 \alias{summary,nnePtR-method}
-\title{Show generic}
+\title{Summary generic}
 \usage{
 \S4method{summary}{nnePtR}(object)
 }
@@ -11,6 +11,6 @@
 \item{object}{object of class nnePtR}
 }
 \description{
-Show generic
+Summary generic
 }
 

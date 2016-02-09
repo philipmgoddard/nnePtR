@@ -21,12 +21,14 @@ setMethod(
     cat(nrow(object@input))
     cat("\nNumber of input features: ")
     cat(ncol(object@input))
-    cat("\nNumber of output classes: ")
-    cat(length(levels(object@outcome)))
+    cat("\nOutcome classes: ")
+    cat(object@levels)
+    cat("\nNumber of outcome classes: ")
+    cat(length(object@levels))
   }
 )
 
-#' Show generic
+#' Summary generic
 #'
 #' @param object object of class nnePtR
 #' @export
@@ -46,8 +48,10 @@ setMethod(
     cat(nrow(object@input))
     cat("\nNumber of input features: ")
     cat(ncol(object@input))
-    cat("\nNumber of output classes: ")
-    cat(length(levels(object@outcome)))
+    cat("\nOutcome classes: ")
+    cat(object@levels)
+    cat("\nNumber of outcome classes: ")
+    cat(length(object@levels))
     cat("\n\nFinal cost: ")
     cat(object@cost)
     cat("\nOptimisation method: ")

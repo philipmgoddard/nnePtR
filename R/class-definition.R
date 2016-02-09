@@ -42,13 +42,15 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                       lambda = 0.01, seed = 1234,
                       iters = 200, optim_method = "L-BFGS-B") {
 
+
   train_input <- data.matrix(train_input)
   outcome_copy <- train_outcome
   train_outcome <- as.numeric(train_outcome)
 
+  # DO WE NEED SEED? IS overwritten when fail to initialise after all...
   seed_tmp <- seed
-  repeat {
 
+  repeat {
     templates <- nnetTrainSetup_c(train_input,
                                   train_outcome,
                                   nLayers,
@@ -63,7 +65,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
     outcomeMat <- templates[[7]]
 
     unrollThetas <- unrollParams_c(Thetas_size)
-
 
     params <- failwith(NULL, optim)(unrollThetas,
                                    fn = nnePtR::forwardProp,
@@ -82,7 +83,10 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                                    hessian = FALSE,
                                    control = list(maxit = iters))
 
-    if(!is.null(params)) break
+    if(!is.null(params)) {
+      seed_tmp <- seed
+      break
+    }
     seed_tmp <- seed_tmp + 1
   }
 
