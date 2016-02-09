@@ -14,6 +14,8 @@ S4 class definition for a neural network
 
 \item{\code{train_outcome}}{}
 
+\item{\code{levels}}{}
+
 \item{\code{n_layers}}{}
 
 \item{\code{n_units}}{}

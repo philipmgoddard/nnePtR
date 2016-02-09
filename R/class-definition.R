@@ -2,6 +2,7 @@
 #'
 #' @slot train_input
 #' @slot train_outcome
+#' @slot levels
 #' @slot n_layers
 #' @slot n_units
 #' @slot penalty
@@ -15,6 +16,7 @@ setClass(
   slots = list(
     input = "matrix",
     outcome = "factor",
+    levels = "character",
     n_layers = "numeric",
     n_units = "numeric",
     penalty = "numeric",
@@ -37,49 +39,59 @@ setClass(
 #' @export
 #'
 nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
-                      lambda = 0.01, seed = as.numeric(Sys.time()),
+                      lambda = 0.01, seed = 1234,
                       iters = 200, optim_method = "L-BFGS-B") {
 
   train_input <- data.matrix(train_input)
   outcome_copy <- train_outcome
   train_outcome <- as.numeric(train_outcome)
 
-  templates <- nnetTrainSetup_c(train_input,
-                              train_outcome,
-                              nLayers,
-                              nUnits,
-                              seed = seed)
-  a_size <- templates[[1]]
-  z_size <- templates[[2]]
-  delta_size <- templates[[3]]
-  Thetas_size <- templates[[4]]
-  Deltas_size <- templates[[5]]
-  grad_size <- templates[[6]]
-  outcomeMat <- templates[[7]]
+  seed_tmp <- seed
+  repeat {
 
-  unrollThetas <- unrollParams_c(Thetas_size)
-  params <- optim(unrollThetas,
-                  fn = nnePtR::forwardProp,
-                  gr = nnePtR::backProp,
-                  method = "L-BFGS-B",
-                  Thetas = Thetas_size,
-                  nUnits = nUnits,
-                  nLayers = nLayers,
-                  lambda = lambda,
-                  outcome = outcomeMat,
-                  a = a_size,
-                  z = z_size,
-                  gradient = grad_size,
-                  delta = delta_size,
-                  Deltas = Deltas_size,
-                  hessian = FALSE,
-                  control = list(maxit = iters))
+    templates <- nnetTrainSetup_c(train_input,
+                                  train_outcome,
+                                  nLayers,
+                                  nUnits,
+                                  seed = seed_tmp)
+    a_size <- templates[[1]]
+    z_size <- templates[[2]]
+    delta_size <- templates[[3]]
+    Thetas_size <- templates[[4]]
+    Deltas_size <- templates[[5]]
+    grad_size <- templates[[6]]
+    outcomeMat <- templates[[7]]
+
+    unrollThetas <- unrollParams_c(Thetas_size)
+
+
+    params <- failwith(NULL, optim)(unrollThetas,
+                                   fn = nnePtR::forwardProp,
+                                   gr = nnePtR::backProp,
+                                   method = "L-BFGS-B",
+                                   Thetas = Thetas_size,
+                                   nUnits = nUnits,
+                                   nLayers = nLayers,
+                                   lambda = lambda,
+                                   outcome = outcomeMat,
+                                   a = a_size,
+                                   z = z_size,
+                                   gradient = grad_size,
+                                   delta = delta_size,
+                                   Deltas = Deltas_size,
+                                   hessian = FALSE,
+                                   control = list(maxit = iters))
+
+    if(!is.null(params)) break
+    seed_tmp <- seed_tmp + 1
+  }
 
   Thetas_final <- rollParams_c(params$par, nLayers, Thetas_size)
 
   return(new(Class = "nnePtR",
              input = train_input,
              outcome = outcome_copy,
+             levels = levels(outcome_copy),
              n_layers = nLayers,
              n_units = nUnits,
              penalty = lambda,
@@ -88,7 +100,8 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
              info = list(method = optim_method,
                          max_iterations = iters,
                          convergence = params$convergence))
-         )
+  )
+
 }
 
 #' Initializor to catch input errors
@@ -96,6 +109,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
 #' @param .Object object of class nnePtR
 #' @param input matrix of inputs. Dimensions are (n training samples x n features)
 #' @param outcome factor variable for outcome
+#' @param levels character vector of levels of outcome
 #' @param n_layers number of hidden layers in the network
 #' @param n_units number of units in the hidden layers
 #' @param penalty penalty term (weight decay)
@@ -106,7 +120,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
 setMethod(
   f="initialize",
   signature = "nnePtR",
-  definition = function(.Object, input, outcome,
+  definition = function(.Object, input, outcome, levels,
                         n_layers, n_units, penalty,
                         cost, fitted_params, info) {
 
@@ -119,6 +133,7 @@ setMethod(
 
     .Object@input <- input
     .Object@outcome <- outcome
+    .Object@levels <- levels
     .Object@n_layers <- n_layers
     .Object@n_units <- n_units
     .Object@penalty <- penalty

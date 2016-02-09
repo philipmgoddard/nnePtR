@@ -61,3 +61,17 @@ rollParams <- function(x, nLayers, Thetas_size) {
 rollParams_c <- compiler::cmpfun(rollParams)
 
 
+#' Function operator to catch exceptions for optimisation when fitting neural network.
+#' Courtesy Hadley Wickam.
+#' @param default default value to return when exception occurs
+#' @param f function to try
+#' @param quiet logical. Should the functin fail silently?
+#'
+failwith <- function(default = NULL, f, quiet = TRUE) {
+  force(f)
+  function(...) {
+    out <- default
+    try(out <- f(...), silent = quiet)
+    out
+  }
+}

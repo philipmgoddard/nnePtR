@@ -5,8 +5,7 @@
 \title{Constructor for nnePtR}
 \usage{
 nnetBuild(train_input, train_outcome, nLayers = 1, nUnits = 25,
-  lambda = 0.01, seed = as.numeric(Sys.time()), iters = 200,
-  optim_method = "L-BFGS-B")
+  lambda = 0.01, seed = 1234, iters = 200, optim_method = "L-BFGS-B")
 }
 \arguments{
 \item{train_input}{data frame or matrix of input features}

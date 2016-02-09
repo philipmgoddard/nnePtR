@@ -5,8 +5,8 @@
 \alias{initialize,nnePtR-method}
 \title{Initializor to catch input errors}
 \usage{
-\S4method{initialize}{nnePtR}(.Object, input, outcome, n_layers, n_units,
-  penalty, cost, fitted_params, info)
+\S4method{initialize}{nnePtR}(.Object, input, outcome, levels, n_layers,
+  n_units, penalty, cost, fitted_params, info)
 }
 \arguments{
 \item{.Object}{object of class nnePtR}
@@ -14,6 +14,8 @@
 \item{input}{matrix of inputs. Dimensions are (n training samples x n features)}
 
 \item{outcome}{factor variable for outcome}
+
+\item{levels}{character vector of levels of outcome}
 
 \item{n_layers}{number of hidden layers in the network}
 
