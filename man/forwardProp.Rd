@@ -6,7 +6,7 @@
 using current value of parameters Theta}
 \usage{
 forwardProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a, z,
-  gradient, delta, Deltas)
+  gradient, delta)
 }
 \arguments{
 \item{unrollThetas}{vector comprised of unrolled parameter matrix elements}
@@ -28,8 +28,6 @@ forwardProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a, z,
 \item{gradient}{template list of matrices of gradients}
 
 \item{delta}{template list of matrices of errors}
-
-\item{Deltas}{template list of matrices of product of activations and errors}
 }
 \description{
 forwardProp performs a forward propogation through the network,

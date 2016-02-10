@@ -77,3 +77,67 @@ failwith <- function(default = NULL, f, quiet = TRUE) {
     out
   }
 }
+
+
+#' split function - make a closure to speed up use of optim by caching. now we just need backprop!
+#' modify backprop so it calculates the cost.
+#' Then first pass of backprop- calcs cost and gradient + caches. second call, retrieves cached gradient
+#' @param f f the function to be split
+#'
+#'
+splitfn <- function(f) {
+  lastx <- NA
+  lastfn <- NA
+  lastgr <- NA
+
+  doeval <- function(x) {
+    if (identical(all.equal(x, lastx), TRUE)) return(lastfn)
+    lastx <<- x
+    both <- f(x)
+    lastfn <<- both$fnval
+    lastgr <<- both$grval
+    return(lastfn)
+  }
+
+  fn <- function(x) doeval(x)
+
+  gr <- function(x) {
+    doeval(x)
+    lastgr
+  }
+
+  list(fn=fn, gr=gr)
+}
+
+# fr <- function(x) {   ## Rosenbrock Banana function - gradient and function both returned
+#   Sys.sleep(0.001)
+#   x1 <- x[1]
+#   x2 <- x[2]
+#   fn <- 100 * (x2 - x1 * x1)^2 + (1 - x1)^2
+#   gr <- c(-400 * x1 * (x2 - x1 * x1) - 2 * (1 - x1), 200*(x2 - x1 * x1))
+#   return(list(fnval = fn, grval = gr))
+# }
+#
+# f2 <- splitfn(fr)
+#
+#
+# grr <- function(x) { ## Gradient of 'fr'
+#   Sys.sleep(0.001)
+#
+#   x1 <- x[1]
+#   x2 <- x[2]
+#   c(-400 * x1 * (x2 - x1 * x1) - 2 * (1 - x1),
+#     200 *      (x2 - x1 * x1))
+# }
+# frr <- function(x) {   ## Rosenbrock Banana function
+#   Sys.sleep(0.001)
+#
+#   x1 <- x[1]
+#   x2 <- x[2]
+#   100 * (x2 - x1 * x1)^2 + (1 - x1)^2
+# }
+#
+#
+# optim(c(-1.2,1), fn = f2$fn, gr =f2$gr, method = "BFGS")
+#
+# optim(c(-1.2,1), frr, grr, method = "BFGS")

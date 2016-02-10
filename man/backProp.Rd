@@ -7,7 +7,7 @@ of Thetas, then performs a backward propogation to calculate
 gradient needed for optimisation}
 \usage{
 backProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a, z, gradient,
-  delta, Deltas)
+  delta)
 }
 \arguments{
 \item{unrollThetas}{vector comprised of unrolled parameter matrix elements}
@@ -29,8 +29,6 @@ backProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a, z, gradient,
 \item{gradient}{template list of matrices of gradients}
 
 \item{delta}{template list of matrices of errors}
-
-\item{Deltas}{template list of matrices of product of activations and errors}
 }
 \description{
 backProp performs a forward propogation with current values

@@ -11,13 +11,11 @@
 #' @param z template list of transformed activation matrices
 #' @param gradient template list of matrices of gradients
 #' @param delta template list of matrices of errors
-#' @param Deltas template list of matrices of product of activations and errors
 #' @export
 #'
 forwardProp <- function(unrollThetas,
                         Thetas, nUnits, nLayers, lambda, outcome,
-                        a, z, gradient,
-                        delta, Deltas) {
+                        a, z, gradient, delta) {
   # note that gr needs same inputs as fn for use in optim, even if not used
   # gradient, delta and Deltas not needed
   m <- nrow(outcome)

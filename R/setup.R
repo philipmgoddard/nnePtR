@@ -34,19 +34,10 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
     }
   })
 
-  z_size <- lapply(1:(nLayers + 1), function(x) {
-    if(x == nLayers + 1) {
-      matrix(NA, nrow = nSample, ncol = nOutcome)
-    }
-    else {
-      matrix(NA, nrow = nSample, ncol = nUnits)
-    }
-  })
-
+  z_size <- a_size[2:length(a_size)]
   delta_size <- z_size
 
   set.seed(seed)
-  #epsilon_init <- 0.12
   Thetas_size <- lapply(1:(nLayers + 1), function(x) {
     # find more formal way to decide on initial weights
     epsilon_init <- sqrt(6 / dim(a_size[[x]])[1])
@@ -63,19 +54,7 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
            ncol = nC)
   })
 
-  Deltas_size <- lapply(1:(nLayers + 1), function(x) {
-    nC <- dim(a_size[[x]])[2]
-    if(x != (nLayers + 1)) {
-      nR <- dim(a_size[[x + 1]])[2] - 1
-    } else {
-      nR <- dim(a_size[[x + 1]])[2]
-    }
-    matrix(data = NA,
-           nrow = nR,
-           ncol = nC)
-  })
-
-  grad_size <- Deltas_size
+  grad_size <- Thetas_size
 
   # dummy up training outcomes
   outcomeMat <- matrix(data = 0,
@@ -89,9 +68,8 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
                z_temp = z_size,
                delta_temp = delta_size,
                thetas_temp = Thetas_size,
-               Deltas_temp = Deltas_size,
                grad_temp = grad_size,
-               outcome_temp = outcomeMat))
+               outcome_Mat = outcomeMat))
 }
 
 #' @describeIn nnetTrainSetup

@@ -48,10 +48,12 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
   train_outcome <- as.numeric(train_outcome)
 
   # DO WE NEED SEED? IS overwritten when fail to initialise after all...
+  # is for test more than anything else...
   seed_tmp <- seed
 
 
   # redo so that initialise_theta is a seperate function - only that should get recalled
+  # work out how to cache backprop so only need one function call for cost and gradient!
   repeat {
     templates <- nnetTrainSetup_c(train_input,
                                   train_outcome,
@@ -62,9 +64,8 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
     z_size <- templates[[2]]
     delta_size <- templates[[3]]
     Thetas_size <- templates[[4]]
-    Deltas_size <- templates[[5]]
-    grad_size <- templates[[6]]
-    outcomeMat <- templates[[7]]
+    grad_size <- templates[[5]]
+    outcomeMat <- templates[[6]]
 
     unrollThetas <- unrollParams_c(Thetas_size)
 
@@ -81,7 +82,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                                    z = z_size,
                                    gradient = grad_size,
                                    delta = delta_size,
-                                   Deltas = Deltas_size,
                                    hessian = FALSE,
                                    control = list(maxit = iters))
 
