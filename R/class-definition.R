@@ -40,7 +40,7 @@ setClass(
 #'
 nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                       lambda = 0.01, seed = 1234,
-                      iters = 200, optim_method = "L-BFGS-B") {
+                      iters = 100, optim_method = "L-BFGS-B") {
 
 
   train_input <- data.matrix(train_input)
@@ -50,6 +50,8 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
   # DO WE NEED SEED? IS overwritten when fail to initialise after all...
   seed_tmp <- seed
 
+
+  # redo so that initialise_theta is a seperate function - only that should get recalled
   repeat {
     templates <- nnetTrainSetup_c(train_input,
                                   train_outcome,

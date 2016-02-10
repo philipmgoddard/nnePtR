@@ -30,9 +30,11 @@ sigmoidGradient_c <- compiler::cmpfun(sigmoidGradient)
 #' @param x input list of matrices
 #'
 unrollParams <- function(x) {
-  return(unlist(lapply(x, c)))
+  return(unlist(lapply(x, function(x){
+    dim(x) <- nrow(x) * ncol(x)
+    x})
+    ))
 }
-
 
 #' @describeIn unrollParams
 #'
