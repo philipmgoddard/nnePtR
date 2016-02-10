@@ -5,8 +5,7 @@
 \title{forwardProp performs a forward propogation through the network,
 using current value of parameters Theta}
 \usage{
-forwardProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a, z,
-  gradient, delta)
+forwardProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a)
 }
 \arguments{
 \item{unrollThetas}{vector comprised of unrolled parameter matrix elements}
@@ -22,12 +21,6 @@ forwardProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a, z,
 \item{outcome}{matrix of 'dummied' outcomes}
 
 \item{a}{template list of activation matrices (with "zeroth" layer filled in with inputs)}
-
-\item{z}{template list of transformed activation matrices}
-
-\item{gradient}{template list of matrices of gradients}
-
-\item{delta}{template list of matrices of errors}
 }
 \description{
 forwardProp performs a forward propogation through the network,

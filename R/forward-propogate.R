@@ -8,20 +8,16 @@
 #' @param lambda penalty ("weight-decay") term
 #' @param outcome matrix of 'dummied' outcomes
 #' @param a template list of activation matrices (with "zeroth" layer filled in with inputs)
-#' @param z template list of transformed activation matrices
-#' @param gradient template list of matrices of gradients
-#' @param delta template list of matrices of errors
 #' @export
 #'
 forwardProp <- function(unrollThetas,
-                        Thetas, nUnits, nLayers, lambda, outcome,
-                        a, z, gradient, delta) {
+                        Thetas, nUnits, nLayers, lambda, outcome, a) {
   # note that gr needs same inputs as fn for use in optim, even if not used
   # gradient, delta and Deltas not needed
   m <- nrow(outcome)
   Thetas <- rollParams_c(unrollThetas, nLayers, Thetas)
 
-  tmp <- propogate_c(Thetas, a, z, nUnits, nLayers)
+  tmp <- propogate_c(Thetas, a, nUnits, nLayers)
   a <- tmp[[1]]
 
   # cost
@@ -45,9 +41,11 @@ forwardProp <- function(unrollThetas,
 #' @param nUnits number of units in hidden layers
 #' @param nLayers number of hidden layers
 #' @param a template of activation matrices (with "zeroth" layer filled in with inputs)
-#' @param z template of transformed activation matrices
 #'
-propogate <- function(Thetas, a, z, nUnits, nLayers) {
+propogate <- function(Thetas, a, nUnits, nLayers) {
+  # define size z
+  z <- a[2:length(a)]
+
   for(i in 1:nLayers) {
     z[[i]] <- a[[i]] %*% t(Thetas[[i]])
     a[[i + 1]][, 2:ncol(a[[i + 1]])] <- sigmoid_c(z[[i]])

@@ -61,11 +61,8 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                                   nUnits,
                                   seed = seed_tmp)
     a_size <- templates[[1]]
-    z_size <- templates[[2]]
-    delta_size <- templates[[3]]
-    Thetas_size <- templates[[4]]
-    grad_size <- templates[[5]]
-    outcomeMat <- templates[[6]]
+    Thetas_size <- templates[[2]]
+    outcomeMat <- templates[[3]]
 
     unrollThetas <- unrollParams_c(Thetas_size)
 
@@ -79,9 +76,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                                    lambda = lambda,
                                    outcome = outcomeMat,
                                    a = a_size,
-                                   z = z_size,
-                                   gradient = grad_size,
-                                   delta = delta_size,
                                    hessian = FALSE,
                                    control = list(maxit = iters))
 

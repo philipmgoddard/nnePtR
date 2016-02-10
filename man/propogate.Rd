@@ -5,16 +5,14 @@
 \alias{propogate_c}
 \title{propogate performs the meat of the work for forwardProp}
 \usage{
-propogate(Thetas, a, z, nUnits, nLayers)
+propogate(Thetas, a, nUnits, nLayers)
 
-propogate_c(Thetas, a, z, nUnits, nLayers)
+propogate_c(Thetas, a, nUnits, nLayers)
 }
 \arguments{
 \item{Thetas}{list of matrices of parameters}
 
 \item{a}{template of activation matrices (with "zeroth" layer filled in with inputs)}
-
-\item{z}{template of transformed activation matrices}
 
 \item{nUnits}{number of units in hidden layers}
 

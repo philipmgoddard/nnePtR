@@ -105,16 +105,16 @@ setMethod(
       }
     })
 
-    z <- lapply(1:(nLayers + 1), function(x) {
-      if(x == nLayers + 1) {
-        matrix(NA, nrow = nSample, ncol = nOutcome)
-      }
-      else {
-        matrix(NA, nrow = nSample, ncol = nUnits)
-      }
-    })
+#     z <- lapply(1:(nLayers + 1), function(x) {
+#       if(x == nLayers + 1) {
+#         matrix(NA, nrow = nSample, ncol = nOutcome)
+#       }
+#       else {
+#         matrix(NA, nrow = nSample, ncol = nUnits)
+#       }
+#     })
 
-    tmp <- propogate(Thetas, a, z, nUnits, nLayers)
+    tmp <- propogate(Thetas, a, nUnits, nLayers)
     a <- tmp[[1]]
 
     # step 3: return classes or probabilities. if 1 class problem, return

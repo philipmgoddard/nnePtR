@@ -34,9 +34,6 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
     }
   })
 
-  z_size <- a_size[2:length(a_size)]
-  delta_size <- z_size
-
   set.seed(seed)
   Thetas_size <- lapply(1:(nLayers + 1), function(x) {
     # find more formal way to decide on initial weights
@@ -54,8 +51,6 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
            ncol = nC)
   })
 
-  grad_size <- Thetas_size
-
   # dummy up training outcomes
   outcomeMat <- matrix(data = 0,
                         nrow = length(outcome),
@@ -65,10 +60,7 @@ nnetTrainSetup <- function(input, outcome, nLayers = 1, nUnits = 10, seed = 1234
   }
 
   return(list (a_temp = a_size,
-               z_temp = z_size,
-               delta_temp = delta_size,
                thetas_temp = Thetas_size,
-               grad_temp = grad_size,
                outcome_Mat = outcomeMat))
 }
 

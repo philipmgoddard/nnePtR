@@ -9,23 +9,23 @@
 #' @param lambda penalty term
 #' @param outcome matrix of 'dummied' outcomes
 #' @param a template list of activation matrices (with "zeroth" layer filled in with inputs)
-#' @param z template list of transformed activation matrices
-#' @param gradient template list of matrices of gradients
-#' @param delta template list of matrices of errors
 #' @export
 #'
 backProp <- function(unrollThetas,
-                     Thetas, nUnits, nLayers, lambda, outcome,
-                     a, z, gradient,
-                     delta) {
+                     Thetas, nUnits, nLayers, lambda, outcome, a) {
 
   m <- nrow(outcome)
   Thetas <- rollParams_c(unrollThetas, nLayers, Thetas)
 
   # forward propogation
-  tmp <- propogate_c(Thetas, a, z, nUnits, nLayers)
+  tmp <- propogate_c(Thetas, a, nUnits, nLayers)
   a <- tmp[[1]]
   z <- tmp[[2]]
+
+  # define sizes of objects base on templates passed in
+  # (they will get overwritten so does not matter they have values)
+  delta <- z
+  gradient <- Thetas
 
   # back propogation to determine errors
   delta[[nLayers + 1]] <- a[[nLayers + 2]] - outcome
@@ -34,10 +34,9 @@ backProp <- function(unrollThetas,
       sigmoidGradient_c(z[[i]])
   }
 
-  # Deltas and gradient
+  # gradient
   for (i in 1:(nLayers + 1)) {
-    #Deltas[[i]] <- t(delta[[i]]) %*% a[[i]]
-    gradient[[i]] <- (t(delta[[i]]) %*% a[[i]]) / m #Deltas[[i]] / m
+    gradient[[i]] <- (t(delta[[i]]) %*% a[[i]]) / m
     gradient[[i]][, 2:ncol(gradient[[i]])] <- gradient[[i]][, 2:ncol(gradient[[i]]), drop = FALSE] +
       (lambda / m) * Thetas[[i]][, 2:ncol(gradient[[i]]), drop = FALSE]
   }
