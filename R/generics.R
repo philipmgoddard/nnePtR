@@ -114,7 +114,7 @@ setMethod(
 #       }
 #     })
 
-    tmp <- propogate(Thetas, a, nUnits, nLayers)
+    tmp <- forwardPropogate_c(Thetas, a, nLayers)
     a <- tmp[[1]]
 
     # step 3: return classes or probabilities. if 1 class problem, return

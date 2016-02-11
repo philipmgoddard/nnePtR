@@ -2,18 +2,22 @@
 % Please edit documentation in R/functions.R
 \name{splitfn}
 \alias{splitfn}
-\title{split function - make a closure to speed up use of optim by caching. now we just need backprop!
-modify backprop so it calculates the cost.
-Then first pass of backprop- calcs cost and gradient + caches. second call, retrieves cached gradient}
+\title{Split function. As gradient and cost both calculated in backProp function
+we want to cache values as optim will call the functions seperately (for fn and gr).
+This closure splits the function, and will check if x (the par argument of optim)
+changes between calls. Will retrieve cached values if not (i.e will calculate cost
+and gradient for for fn, and retrieve cached values for gr)}
 \usage{
 splitfn(f)
 }
 \arguments{
-\item{f}{f the function to be split}
+\item{f}{the function to be split}
 }
 \description{
-split function - make a closure to speed up use of optim by caching. now we just need backprop!
-modify backprop so it calculates the cost.
-Then first pass of backprop- calcs cost and gradient + caches. second call, retrieves cached gradient
+Split function. As gradient and cost both calculated in backProp function
+we want to cache values as optim will call the functions seperately (for fn and gr).
+This closure splits the function, and will check if x (the par argument of optim)
+changes between calls. Will retrieve cached values if not (i.e will calculate cost
+and gradient for for fn, and retrieve cached values for gr)
 }
 

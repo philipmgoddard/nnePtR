@@ -6,16 +6,12 @@
 of Thetas, then performs a backward propogation to calculate
 gradient needed for optimisation}
 \usage{
-backProp(unrollThetas, Thetas, nUnits, nLayers, lambda, outcome, a)
+backProp(unrollThetas, Thetas, lambda, outcome, a)
 }
 \arguments{
 \item{unrollThetas}{vector comprised of unrolled parameter matrix elements}
 
 \item{Thetas}{template list of matrices allocated to correct size}
-
-\item{nUnits}{number of units in each hidden layer of network}
-
-\item{nLayers}{number of hidden layers in the network}
 
 \item{lambda}{penalty term}
 

@@ -1,48 +1,11 @@
-#' forwardProp performs a forward propogation through the network,
+#' forwardPropogate performs a forward propogation through the network,
 #' using current value of parameters Theta
 #'
-#' @param unrollThetas vector comprised of unrolled parameter matrix elements
-#' @param Thetas template list of matrices allocated to correct size
-#' @param nUnits number of units in hidden layers
-#' @param nLayers number of hidden layers
-#' @param lambda penalty ("weight-decay") term
-#' @param outcome matrix of 'dummied' outcomes
-#' @param a template list of activation matrices (with "zeroth" layer filled in with inputs)
-#' @export
-#'
-forwardProp <- function(unrollThetas,
-                        Thetas, nUnits, nLayers, lambda, outcome, a) {
-  # note that gr needs same inputs as fn for use in optim, even if not used
-  # gradient, delta and Deltas not needed
-  m <- nrow(outcome)
-  Thetas <- rollParams_c(unrollThetas, nLayers, Thetas)
-
-  tmp <- propogate_c(Thetas, a, nUnits, nLayers)
-  a <- tmp[[1]]
-
-  # cost
-  J <- (1.0 / m) *
-    sum(colSums((-outcome) * log(a[[nLayers + 2]]) -
-                  (1.0 - outcome) * log(1.0 - a[[nLayers + 2]]) ))
-
-  # penalty
-  penalty <- sum(unlist(lapply(Thetas,
-                               function(x) {
-                                 (lambda / (2.0 * m)) * sum(colSums(x[, 2:ncol(x), drop = FALSE] ^ 2))
-                               }) ))
-
-  J <- J + penalty
-  return(J)
-}
-
-#' propogate performs the meat of the work for forwardProp
-#'
 #' @param Thetas list of matrices of parameters
-#' @param nUnits number of units in hidden layers
 #' @param nLayers number of hidden layers
 #' @param a template of activation matrices (with "zeroth" layer filled in with inputs)
 #'
-propogate <- function(Thetas, a, nUnits, nLayers) {
+forwardPropogate <- function(Thetas, a, nLayers) {
   # define size z
   z <- a[2:length(a)]
 
@@ -58,6 +21,6 @@ propogate <- function(Thetas, a, nUnits, nLayers) {
               z = z))
 }
 
-#' @describeIn propogate
+#' @describeIn forwardPropogate
 #'
-propogate_c <- compiler::cmpfun(propogate)
+forwardPropogate_c <- compiler::cmpfun(forwardPropogate)

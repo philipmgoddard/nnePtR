@@ -4,21 +4,20 @@
 #'
 #' @param unrollThetas vector comprised of unrolled parameter matrix elements
 #' @param Thetas template list of matrices allocated to correct size
-#' @param nUnits number of units in each hidden layer of network
-#' @param nLayers number of hidden layers in the network
 #' @param lambda penalty term
 #' @param outcome matrix of 'dummied' outcomes
 #' @param a template list of activation matrices (with "zeroth" layer filled in with inputs)
 #' @export
 #'
 backProp <- function(unrollThetas,
-                     Thetas, nUnits, nLayers, lambda, outcome, a) {
+                     Thetas, lambda, outcome, a) {
 
+  nLayers <- length(a) - 2
   m <- nrow(outcome)
   Thetas <- rollParams_c(unrollThetas, nLayers, Thetas)
 
   # forward propogation
-  tmp <- propogate_c(Thetas, a, nUnits, nLayers)
+  tmp <- forwardPropogate_c(Thetas, a, nLayers)
   a <- tmp[[1]]
   z <- tmp[[2]]
 
@@ -52,9 +51,8 @@ backProp <- function(unrollThetas,
     gradient[[i]][, 2:ncol(gradient[[i]])] <- gradient[[i]][, 2:ncol(gradient[[i]]), drop = FALSE] +
       (lambda / m) * Thetas[[i]][, 2:ncol(gradient[[i]]), drop = FALSE]
   }
-
-  # unroll gradient so suitable for use with optim
   gr <- unrollParams_c(gradient)
-  # return cost and gradient
+
+  # return cost and unrolled gradient
   return(list(fnval = fn, grval = gr))
 }

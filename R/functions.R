@@ -65,6 +65,7 @@ rollParams_c <- compiler::cmpfun(rollParams)
 
 #' Function operator to catch exceptions for optimisation when fitting neural network.
 #' Courtesy Hadley Wickam.
+#'
 #' @param default default value to return when exception occurs
 #' @param f function to try
 #' @param quiet logical. Should the functin fail silently?
@@ -78,12 +79,13 @@ failwith <- function(default = NULL, f, quiet = TRUE) {
   }
 }
 
-
-#' split function - make a closure to speed up use of optim by caching. now we just need backprop!
-#' modify backprop so it calculates the cost.
-#' Then first pass of backprop- calcs cost and gradient + caches. second call, retrieves cached gradient
-#' @param f the function to be split
+#' Split function. As gradient and cost both calculated in backProp function
+#' we want to cache values as optim will call the functions seperately (for fn and gr).
+#' This closure splits the function, and will check if x (the par argument of optim)
+#' changes between calls. Will retrieve cached values if not (i.e will calculate cost
+#' and gradient for for fn, and retrieve cached values for gr)
 #'
+#' @param f the function to be split
 #'
 splitfn <- function(f) {
   lastx <- NA
@@ -106,39 +108,6 @@ splitfn <- function(f) {
     lastgr
   }
 
-  list(fn=fn, gr=gr)
+  return(list(fn = fn,
+              gr = gr))
 }
-
-# fr <- function(x, b) {   ## Rosenbrock Banana function - gradient and function both returned
-#   Sys.sleep(0.001)
-#   x1 <- x[1]
-#   x2 <- x[2]
-#   fn <- b * 100 * (x2 - x1 * x1)^2 + (1 - x1)^2
-#   gr <- c(-400 * x1 * (x2 - x1 * x1) - 2 * (1 - x1), 200*(x2 - x1 * x1))
-#   return(list(fnval = fn, grval = gr))
-# }
-#
-# f2 <- splitfn(fr)
-# f2$fn(x = c(-1, -1), b = 3)
-# #
-# #
-# # grr <- function(x) { ## Gradient of 'fr'
-# #   Sys.sleep(0.001)
-# #
-# #   x1 <- x[1]
-# #   x2 <- x[2]
-# #   c(-400 * x1 * (x2 - x1 * x1) - 2 * (1 - x1),
-# #     200 *      (x2 - x1 * x1))
-# # }
-# # frr <- function(x) {   ## Rosenbrock Banana function
-# #   Sys.sleep(0.001)
-# #
-# #   x1 <- x[1]
-# #   x2 <- x[2]
-# #   100 * (x2 - x1 * x1)^2 + (1 - x1)^2
-# # }
-# #
-# #
-# optim(c(-1.2,1), fn = f2$fn, gr =f2$gr, b = 3, method = "BFGS")
-# #
-# # optim(c(-1.2,1), frr, grr, method = "BFGS")

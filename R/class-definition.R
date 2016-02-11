@@ -62,6 +62,10 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
 
     unrollThetas <- unrollParams_c(Thetas_size)
 
+    # should make backProp a closure, cache Thetas_size, a_size,
+    # outcomeMat and lambda so do not have to be passed through optim at
+    # each iteration
+
     # we want to split the backProp function so that
     # we can cache, as gr requires the same forward
     # propogation as fn
@@ -72,8 +76,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                                    gr = f2$gr,
                                    method = "L-BFGS-B",
                                    Thetas = Thetas_size,
-                                   nUnits = nUnits,
-                                   nLayers = nLayers,
                                    lambda = lambda,
                                    outcome = outcomeMat,
                                    a = a_size,
@@ -84,6 +86,8 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
       seed_tmp <- seed
       break
     }
+    # maybe put a counter in here
+    # so that if fails more than 3 times stop with an error
     seed_tmp <- seed_tmp + 1
   }
 
