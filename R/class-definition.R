@@ -35,12 +35,13 @@ setClass(
 #' @param seed seed for initialising network
 #' @param iters number of iterations (passed to optim)
 #' @param optim_method opitimisation method (passed to optim)
+#' @param trace should report from optim be produced?
 #' @import methods
 #' @export
 #'
 nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                       lambda = 0.01, seed = 1234,
-                      iters = 100, optim_method = "L-BFGS-B") {
+                      iters = 100, optim_method = "L-BFGS-B", trace = FALSE) {
 
 
   train_input <- data.matrix(train_input)
@@ -49,49 +50,53 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
 
   # Seed is mainly for reprodicibility with tests...
   seed_tmp <- seed
-
+  count <- 1
   repeat {
     templates <- nnetTrainSetup_c(train_input,
                                   train_outcome,
                                   nLayers,
                                   nUnits,
                                   seed = seed_tmp)
-    a_size <- templates[[1]]
-    Thetas_size <- templates[[2]]
-    outcomeMat <- templates[[3]]
 
-    unrollThetas <- unrollParams_c(Thetas_size)
-
-    # should make backProp a closure, cache Thetas_size, a_size,
-    # outcomeMat and lambda so do not have to be passed through optim at
-    # each iteration
+    # we define bp from the closure
+    # now all we need to do is pass unrolled Thetas
+    # as templates are cached in the enclosing environment
+    bp <- backProp(Thetas = templates$thetas_temp,
+                   a = templates$a_temp,
+                   lambda = lambda,
+                   outcome = templates$outcome_Mat)
 
     # we want to split the backProp function so that
     # we can cache, as gr requires the same forward
     # propogation as fn
-    f2 <- splitfn(backProp)
+    f2 <- splitfn(bp)
 
+    # initial params for optim
+    unrollThetas <- unrollParams_c(templates$thetas_temp)
+
+    # optimise parameters
     params <- failwith(NULL, optim)(unrollThetas,
                                    fn = f2$fn,
                                    gr = f2$gr,
-                                   method = "L-BFGS-B",
-                                   Thetas = Thetas_size,
-                                   lambda = lambda,
-                                   outcome = outcomeMat,
-                                   a = a_size,
+                                   method = optim_method,
                                    hessian = FALSE,
-                                   control = list(maxit = iters))
+                                   control = list(maxit = iters,
+                                                  trace = trace))
 
     if(!is.null(params)) {
       seed_tmp <- seed
       break
     }
-    # maybe put a counter in here
-    # so that if fails more than 3 times stop with an error
+
+    # If optimisation fails change seed- params will be
+    # initialised differently
     seed_tmp <- seed_tmp + 1
+    if(count > 5 ) stop("Optimisation failed. Perhaps increase penalty?")
+    count <- count + 1
   }
 
-  Thetas_final <- rollParams_c(params$par, nLayers, Thetas_size)
+  # final parameters
+  Thetas_final <- rollParams_c(params$par, nLayers, templates$thetas_temp)
 
   return(new(Class = "nnePtR",
              input = train_input,
@@ -106,7 +111,6 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                          max_iterations = iters,
                          convergence = params$convergence))
   )
-
 }
 
 #' Initializor to catch input errors

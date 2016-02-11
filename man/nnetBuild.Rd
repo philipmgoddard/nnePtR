@@ -5,7 +5,8 @@
 \title{Constructor for nnePtR}
 \usage{
 nnetBuild(train_input, train_outcome, nLayers = 1, nUnits = 25,
-  lambda = 0.01, seed = 1234, iters = 100, optim_method = "L-BFGS-B")
+  lambda = 0.01, seed = 1234, iters = 100, optim_method = "L-BFGS-B",
+  trace = FALSE)
 }
 \arguments{
 \item{train_input}{data frame or matrix of input features}
@@ -23,6 +24,8 @@ nnetBuild(train_input, train_outcome, nLayers = 1, nUnits = 25,
 \item{iters}{number of iterations (passed to optim)}
 
 \item{optim_method}{opitimisation method (passed to optim)}
+
+\item{trace}{should report from optim be produced?}
 }
 \description{
 Constructor for nnePtR

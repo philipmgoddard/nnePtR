@@ -2,26 +2,25 @@
 % Please edit documentation in R/backward-propogate.R
 \name{backProp}
 \alias{backProp}
-\title{backProp performs a forward propogation with current values
-of Thetas, then performs a backward propogation to calculate
-gradient needed for optimisation}
+\title{backProp}
 \usage{
-backProp(unrollThetas, Thetas, lambda, outcome, a)
+backProp(Thetas, a, lambda, outcome)
 }
 \arguments{
-\item{unrollThetas}{vector comprised of unrolled parameter matrix elements}
-
 \item{Thetas}{template list of matrices allocated to correct size}
+
+\item{a}{template list of activation matrices (with "zeroth" layer filled in with inputs)}
 
 \item{lambda}{penalty term}
 
 \item{outcome}{matrix of 'dummied' outcomes}
-
-\item{a}{template list of activation matrices (with "zeroth" layer filled in with inputs)}
 }
 \description{
-backProp performs a forward propogation with current values
+Performs a forward propogation with current values
 of Thetas, then performs a backward propogation to calculate
-gradient needed for optimisation
+gradient needed for optimisation. The usage is to take advantage of the closure to store
+templates of matrices, the penalty term, and the outcome.
+The function then only needs to be passed the unrolled parameters
+as it is called iteratively for optimisation.
 }
 
