@@ -47,13 +47,9 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
   outcome_copy <- train_outcome
   train_outcome <- as.numeric(train_outcome)
 
-  # DO WE NEED SEED? IS overwritten when fail to initialise after all...
-  # is for test more than anything else...
+  # Seed is mainly for reprodicibility with tests...
   seed_tmp <- seed
 
-
-  # redo so that initialise_theta is a seperate function - only that should get recalled
-  # work out how to cache backprop so only need one function call for cost and gradient!
   repeat {
     templates <- nnetTrainSetup_c(train_input,
                                   train_outcome,
@@ -66,9 +62,14 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
 
     unrollThetas <- unrollParams_c(Thetas_size)
 
+    # we want to split the backProp function so that
+    # we can cache, as gr requires the same forward
+    # propogation as fn
+    f2 <- splitfn(backProp)
+
     params <- failwith(NULL, optim)(unrollThetas,
-                                   fn = nnePtR::forwardProp,
-                                   gr = nnePtR::backProp,
+                                   fn = f2$fn,
+                                   gr = f2$gr,
                                    method = "L-BFGS-B",
                                    Thetas = Thetas_size,
                                    nUnits = nUnits,

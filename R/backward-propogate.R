@@ -22,6 +22,18 @@ backProp <- function(unrollThetas,
   a <- tmp[[1]]
   z <- tmp[[2]]
 
+  J <- (1.0 / m) *
+    sum(colSums((-outcome) * log(a[[nLayers + 2]]) -
+                  (1.0 - outcome) * log(1.0 - a[[nLayers + 2]]) ))
+
+  # penalty
+  penalty <- sum(unlist(lapply(Thetas,
+                               function(x) {
+                                 (lambda / (2.0 * m)) * sum(colSums(x[, 2:ncol(x), drop = FALSE] ^ 2))
+                               }) ))
+
+  fn <- J + penalty
+
   # define sizes of objects base on templates passed in
   # (they will get overwritten so does not matter they have values)
   delta <- z
@@ -42,6 +54,7 @@ backProp <- function(unrollThetas,
   }
 
   # unroll gradient so suitable for use with optim
-  unrollGrad <- unrollParams_c(gradient)
-  return(unrollGrad)
+  gr <- unrollParams_c(gradient)
+  # return cost and gradient
+  return(list(fnval = fn, grval = gr))
 }
