@@ -82,7 +82,7 @@ nnetBuild <- function(train_input, train_outcome, nLayers = 1, nUnits = 25,
                                    hessian = FALSE,
                                    control = list(maxit = iters,
                                                   trace = trace))
-
+    # continue if optimisation successful
     if(!is.null(params)) {
       seed_tmp <- seed
       break

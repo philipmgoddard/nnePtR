@@ -105,15 +105,6 @@ setMethod(
       }
     })
 
-#     z <- lapply(1:(nLayers + 1), function(x) {
-#       if(x == nLayers + 1) {
-#         matrix(NA, nrow = nSample, ncol = nOutcome)
-#       }
-#       else {
-#         matrix(NA, nrow = nSample, ncol = nUnits)
-#       }
-#     })
-
     tmp <- forwardPropogate_c(Thetas, a, nLayers)
     a <- tmp[[1]]
 
