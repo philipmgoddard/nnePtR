@@ -9,6 +9,14 @@ user may define number of hidden layers and number of weights in hidden layers
 
 solves using optim() with default "L-BFGS-B"
 
-##TODO:
-redo backprop as a closure to store theta size and a size templates. Should get some
-speedup there as wont have to pass these through optim as every iteration
+### example usage
+
+```R
+library(nnePtR)
+model <- nnetBuild(iris[, 1:4], iris[, 5], nLayers = 2, nUnits = 20, lambda = 0.1)
+
+summary(model)
+predict(model, newdata = iris[, 1:4], type = "prob")
+```
+
+Enjoy!
